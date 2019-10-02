@@ -1,17 +1,18 @@
 // auth context provider, create methods and data required for authorization 
 
 import React from 'react'; 
+import PropTypes from 'prop-types';
 import jwt from 'jsonwebtoken'; 
 import cookie from 'react-cookies';
 
-const API = process.env.REACT_APP_API; 
-
 export const LoginContext = React.createContext(); 
+
+const API = process.env.REACT_APP_API; 
 
 // what is our default state? 
 class LoginProvider extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       // all the auth data we pass to children
       loggedIn: false,
@@ -24,39 +25,41 @@ class LoginProvider extends React.Component {
 
   // login
   login = (username, password, type) => {
-    let options = {
+    const options = {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
-      headers new Headers({
-        Authorization: `Basic ${kbtoa(`${username}:${password}`)}`,
+      headers: new Headers({
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
       }),
     };
 
     if (type === 'signup') {
       options.body = JSON.stringify({ username, password });
-      options.headers = new Headers ({
+      options.headers = new Headers({
         'Content-Type': 'applications/json',
       });
     }
 
     fetch(`${API}/${type}`, options)
-    .then((response) => response.text())
-    .then((token) => this.validateToken(token))
-    .catch(console.error);
+      .then(response => response.text())
+      .then(token => this.validateToken(token))
+      .catch(console.error);
   }
 
   // logout 
+  logout = () => {
+    this.setLoginState(false, null, {});
+  };
 
   // validate token
   validateToken = (token) => {
-    //verify and generate id, capability, type 
+    // verify and generate id, capability, type 
     try {
-      const user = jst.verify(token, process.env.REACT_APP_SECRET); 
+      const user = jwt.verify(token, process.env.REACT_APP_SECRET); 
       console.log(user); 
       this.setLoginState(true, user, token); 
-    }
-    catch (error) {
+    } catch (error) {
       this.setLoginState(false, null, {}); 
     }
   }
@@ -64,22 +67,29 @@ class LoginProvider extends React.Component {
   // state management/handling 
   setLoginState = (loggedIn, user, token) => {
     cookie.save('auth', token);
-
+    this.setState({ token, loggedIn, user });
   }
 
   // lifecycle component
 
   componentDidMount() {
-    // when component is born, validate tokens, set cookies 
+    // validate tokens, set cookies
+    const cookieToken = cookie.load('auth');
+    this.validateToken(cookieToken);  
   }
 
   render() {
     return (
-      <LoginContext.Provider>
+      <LoginContext.Provider value = {this.state}>
         {this.props.children}
       </LoginContext.Provider>
-    )
+    ); 
   }
+}
+
+LoginProvider.propTypes = {
+  capability: PropTypes.string.isRequired,
+  children: PropTypes.node, 
 };
 
 export default LoginProvider;

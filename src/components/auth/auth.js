@@ -1,16 +1,19 @@
-//conditionally rendered component wrapper
+// conditionally rendered component wrapper
 
 import React from 'react';
+
+import PropTypes from 'prop-types';
+
 import { LoginContext } from './context';
 
-const If = props => {
-  return !!props.condition ? props.children : null; 
+const If = (props) => {
+  return props.condition ? props.children : null; 
 };
 
 class Auth extends React.Component {
   static contextType = LoginContext; 
 
-  render(){
+  render() {
     let goodToRender = false;
     try {
       // return JSX base on boolean value 
@@ -18,10 +21,7 @@ class Auth extends React.Component {
       && (this.props.capability 
         ? this.context.user.capabilities.includes(this.props.capability)
         : false);
-
-    }
-    
-    catch(error) {
+    } catch (error) {
       console.warn('Not Authorized!'); 
     }
 
@@ -31,7 +31,13 @@ class Auth extends React.Component {
         <div>{this.props.children}</div>
 
       </If>
-    )
+    );
   }
-
 }
+
+Auth.propTypes = {
+  capability: PropTypes.string.isRequired,
+  children: PropTypes.node, 
+};
+
+export default Auth; 
