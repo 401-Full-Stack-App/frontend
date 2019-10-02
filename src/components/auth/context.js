@@ -4,7 +4,7 @@ import React from 'react';
 import jwt from 'jsonwebtoken'; 
 import cookie from 'react-cookies';
 
-export const LoginContext = React. createContext(); 
+export const LoginContext = React.createContext(); 
 
 const API = process.env.REACT_APP_API; 
 
@@ -23,9 +23,9 @@ class LoginProvider extends React.Component {
   }
 
   // login
-  //TODO: FIX THIS
+  // TODO: FIX THIS
   login = (username, password, type) => {
-    let options = {
+    const options = {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
@@ -36,15 +36,15 @@ class LoginProvider extends React.Component {
 
     if (type === 'signup') {
       options.body = JSON.stringify({ username, password });
-      options.headers = new Headers ({
+      options.headers = new Headers({
         'Content-Type': 'applications/json',
       });
     }
 
     fetch(`${API}/${type}`, options)
-    .then((response) => response.text())
-    .then((token) => this.validateToken(token))
-    .catch(console.error);
+      .then(response => response.text())
+      .then(token => this.validateToken(token))
+      .catch(console.error);
   }
 
   // logout 
@@ -54,13 +54,12 @@ class LoginProvider extends React.Component {
 
   // validate token
   validateToken = (token) => {
-    //verify and generate id, capability, type 
+    // verify and generate id, capability, type 
     try {
       const user = jwt.verify(token, process.env.REACT_APP_SECRET); 
       console.log(user); 
       this.setLoginState(true, user, token); 
-    }
-    catch (error) {
+    } catch (error) {
       this.setLoginState(false, null, {}); 
     }
   }
@@ -86,6 +85,6 @@ class LoginProvider extends React.Component {
       </LoginContext.Provider>
     ); 
   }
-};
+}
 
 export default LoginProvider;

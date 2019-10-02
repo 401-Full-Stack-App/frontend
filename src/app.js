@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 import Auth from './components/auth/auth';
 import Login from './components/auth/login';
 import LoginProvider from './components/auth/context';
 
-const Read = props => {
+// eslint-disable-next-line no-unused-vars
+const Read = (props) => {
   return (
     <Auth capability="read">
       <span>Read</span>
@@ -12,7 +14,7 @@ const Read = props => {
   );
 };
 
-const Update = props => {
+const Update = (props) => {
   return (
     <Auth capability="update">
       <span>Update</span>
