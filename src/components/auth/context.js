@@ -1,6 +1,7 @@
 // auth context provider, create methods and data required for authorization 
 
 import React from 'react'; 
+import PropTypes from 'prop-types';
 import jwt from 'jsonwebtoken'; 
 import cookie from 'react-cookies';
 
@@ -23,7 +24,6 @@ class LoginProvider extends React.Component {
   }
 
   // login
-  // TODO: FIX THIS
   login = (username, password, type) => {
     const options = {
       method: 'POST',
@@ -86,5 +86,10 @@ class LoginProvider extends React.Component {
     ); 
   }
 }
+
+LoginProvider.propTypes = {
+  capability: PropTypes.string.isRequired,
+  children: PropTypes.node, 
+};
 
 export default LoginProvider;

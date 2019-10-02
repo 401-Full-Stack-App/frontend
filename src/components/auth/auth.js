@@ -1,6 +1,9 @@
 // conditionally rendered component wrapper
 
 import React from 'react';
+
+import PropTypes from 'prop-types';
+
 import { LoginContext } from './context';
 
 const If = (props) => {
@@ -31,5 +34,10 @@ class Auth extends React.Component {
     );
   }
 }
+
+Auth.propTypes = {
+  capability: PropTypes.string.isRequired,
+  children: PropTypes.node, 
+};
 
 export default Auth; 
