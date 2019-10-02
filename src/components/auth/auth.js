@@ -18,7 +18,6 @@ class Auth extends React.Component {
       && (this.props.capability 
         ? this.context.user.capabilities.includes(this.props.capability)
         : false);
-
     }
     
     catch(error) {
@@ -33,5 +32,6 @@ class Auth extends React.Component {
       </If>
     )
   }
-
 }
+
+export default Auth; 

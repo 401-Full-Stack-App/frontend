@@ -4,14 +4,14 @@ import React from 'react';
 import jwt from 'jsonwebtoken'; 
 import cookie from 'react-cookies';
 
-const API = process.env.REACT_APP_API; 
+export const LoginContext = React. createContext(); 
 
-export const LoginContext = React.createContext(); 
+const API = process.env.REACT_APP_API; 
 
 // what is our default state? 
 class LoginProvider extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       // all the auth data we pass to children
       loggedIn: false,
@@ -23,13 +23,14 @@ class LoginProvider extends React.Component {
   }
 
   // login
+  //TODO: FIX THIS
   login = (username, password, type) => {
     let options = {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
-      headers new Headers({
-        Authorization: `Basic ${kbtoa(`${username}:${password}`)}`,
+      headers: new Headers({
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
       }),
     };
 
@@ -47,12 +48,15 @@ class LoginProvider extends React.Component {
   }
 
   // logout 
+  logout = () => {
+    this.setLoginState(false, null, {});
+  };
 
   // validate token
   validateToken = (token) => {
     //verify and generate id, capability, type 
     try {
-      const user = jst.verify(token, process.env.REACT_APP_SECRET); 
+      const user = jwt.verify(token, process.env.REACT_APP_SECRET); 
       console.log(user); 
       this.setLoginState(true, user, token); 
     }
@@ -64,21 +68,23 @@ class LoginProvider extends React.Component {
   // state management/handling 
   setLoginState = (loggedIn, user, token) => {
     cookie.save('auth', token);
-
+    this.setState({ token, loggedIn, user });
   }
 
   // lifecycle component
 
   componentDidMount() {
-    // when component is born, validate tokens, set cookies 
+    // validate tokens, set cookies
+    const cookieToken = cookie.load('auth');
+    this.validateToken(cookieToken);  
   }
 
   render() {
     return (
-      <LoginContext.Provider>
+      <LoginContext.Provider value = {this.state}>
         {this.props.children}
       </LoginContext.Provider>
-    )
+    ); 
   }
 };
 
