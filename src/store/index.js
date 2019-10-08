@@ -1,4 +1,13 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { composeWithDeveTools } from 'redux-devtools-extension'; 
+import { composeWithDevTools } from 'redux-devtools-extension';
 
-// import 'todos' from './reducer' 
+import thunk from './middleware/thunk';
+
+// TODO: change this to your model re: forum 
+// import todos from './reducers/todos';
+
+
+
+const store = () => createStore(reducers, composeWithDevTools(applyMiddleware(thunk)));
+
+export default store;
